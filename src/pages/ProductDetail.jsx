@@ -164,9 +164,9 @@ function ProductDetail() {
                             className={`btn ${inCart ? 'btn-secondary' : 'btn-primary'}`}
                             style={{ flex: 1, padding: '16px', fontSize: 16 }}
                             onClick={handleAddToCart}
-                            disabled={!product.inStock}
+                            disabled={!product.inStock || (cart.find(i => i.product._id === product._id)?.quantity || 0) >= product.countInStock}
                         >
-                            {!product.inStock ? 'Out of Stock' : inCart ? '✓ In Cart - Add More' : 'Add to Cart'}
+                            {!product.inStock ? 'Out of Stock' : (cart.find(i => i.product._id === product._id)?.quantity || 0) >= product.countInStock ? 'Stock Limit Reached' : inCart ? '✓ In Cart - Add More' : 'Add to Cart'}
                         </button>
                     </div>
                 </div>

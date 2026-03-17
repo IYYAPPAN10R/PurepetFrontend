@@ -91,6 +91,9 @@ function ProductCard({ product }) {
         setTimeout(() => setAdded(false), 2000)
     }
 
+    const currentQty = cart.find(i => i.product._id === product._id)?.quantity || 0
+    const limitReached = currentQty >= product.countInStock
+
     return (
         <div className="product-card">
             <ProductImage product={product} />
@@ -122,10 +125,10 @@ function ProductCard({ product }) {
                 <button
                     className={`btn add-to-cart-btn ${inCart ? 'in-cart' : ''}`}
                     onClick={handleAddToCart}
-                    disabled={!product.inStock}
+                    disabled={!product.inStock || limitReached}
                     style={{ marginTop: 14, width: '100%' }}
                 >
-                    {!product.inStock ? 'Out of Stock' : added ? '✓ Added to Cart!' : inCart ? '+ Add More' : 'Add to Cart'}
+                    {!product.inStock ? 'Out of Stock' : limitReached ? 'Stock Limit Reached' : added ? '✓ Added to Cart!' : inCart ? '+ Add More' : 'Add to Cart'}
                 </button>
             </div>
         </div>

@@ -29,11 +29,23 @@ export function CartProvider({ children }) {
         setCart(prev => {
             const existing = prev.find(i => i.product._id === product._id)
             if (existing) {
+                if (existing.quantity >= product.countInStock) {
+                    import('react-hot-toast').then(({ toast }) => {
+                        toast.error(`Only ${product.countInStock} available. Limit reached!`)
+                    })
+                    return prev
+                }
                 return prev.map(i =>
                     i.product._id === product._id
                         ? { ...i, quantity: i.quantity + 1 }
                         : i
                 )
+            }
+            if (product.countInStock < 1) {
+                import('react-hot-toast').then(({ toast }) => {
+                    toast.error('Item is out of stock.')
+                })
+                return prev
             }
             return [...prev, { product, quantity: 1 }]
         })
@@ -44,10 +56,21 @@ export function CartProvider({ children }) {
     }, [])
 
     const updateQty = useCallback((productId, qty) => {
-        const n = Math.max(1, parseInt(qty) || 1)
-        setCart(prev =>
-            prev.map(i => i.product._id === productId ? { ...i, quantity: n } : i)
-        )
+        setCart(prev => {
+            const item = prev.find(i => i.product._id === productId)
+            if (!item) return prev
+            
+            let n = parseInt(qty) || 1
+            if (n > item.product.countInStock) {
+                import('react-hot-toast').then(({ toast }) => {
+                    toast.error(`Only ${item.product.countInStock} available. Limit reached!`)
+                })
+                n = item.product.countInStock
+            }
+            n = Math.max(1, n)
+            
+            return prev.map(i => i.product._id === productId ? { ...i, quantity: n } : i)
+        })
     }, [])
 
     const clearCart = useCallback(() => {
