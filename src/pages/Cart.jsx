@@ -71,13 +71,18 @@ export default function Cart() {
                                 {cart.map((item, idx) => (
                                     <div key={item.product._id} className={`cart-item-row ${idx < cart.length - 1 ? 'cart-item-row--bordered' : ''}`}>
                                         <CartItemImage item={item} />
-                                        <div className="cart-item-info">
-                                            <div className="cart-item-name">{item.product.name}</div>
-                                            <div className="cart-item-meta">
-                                                <span className="badge badge-blue" style={{ textTransform: 'capitalize' }}>{item.product.category}</span>
-                                                {item.product.capacity && <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{item.product.capacity}</span>}
+                                            <div className="cart-item-info">
+                                                <div className="cart-item-name">{item.product.name}</div>
+                                                <div className="cart-item-meta">
+                                                    <span className="badge badge-blue" style={{ textTransform: 'capitalize' }}>{item.product.category}</span>
+                                                    {item.product.capacity && <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{item.product.capacity}</span>}
+                                                </div>
+                                                {item.quantity > item.product.countInStock && (
+                                                    <div style={{ color: 'var(--error)', fontSize: 12, marginTop: 4, fontWeight: 'bold' }}>
+                                                        ⚠️ Only {item.product.countInStock} available in stock.
+                                                    </div>
+                                                )}
                                             </div>
-                                        </div>
                                         <div className="cart-qty-stepper">
                                             <button
                                                 className="qty-btn"
@@ -138,8 +143,9 @@ export default function Cart() {
                                         className="btn btn-primary btn-full"
                                         style={{ marginTop: 16 }}
                                         onClick={() => navigate('/order')}
+                                        disabled={cart.some(item => item.quantity > item.product.countInStock)}
                                     >
-                                        Place Bulk Order Request →
+                                        {cart.some(item => item.quantity > item.product.countInStock) ? '⚠ Insufficient Stock' : 'Place Bulk Order Request →'}
                                     </button>
                                 ) : (
                                     <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
