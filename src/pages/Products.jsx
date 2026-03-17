@@ -115,7 +115,7 @@ function ProductCard({ product }) {
                     <span className="stock-indicator">
                         <span className={`stock-dot ${product.inStock ? 'in' : 'out'}`} />
                         <span style={{ color: product.inStock ? 'var(--success)' : 'var(--text-muted)' }}>
-                            {product.inStock ? 'In Stock' : 'Out of Stock'}
+                            {product.inStock ? (product.countInStock < 10 ? `Only ${product.countInStock} Left` : 'In Stock') : 'Out of Stock'}
                         </span>
                     </span>
                 </div>

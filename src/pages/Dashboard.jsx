@@ -10,7 +10,7 @@ function ProductModal({ product, onClose, onSave }) {
     const [form, setForm] = useState(product || {
         name: '', capacity: '', material: 'PET (Polyethylene Terephthalate)',
         description: '', category: 'water', color: 'Clear / Transparent',
-        weight: '', dimensions: '', inStock: true, image: '',
+        weight: '', dimensions: '', inStock: true, countInStock: 0, image: '',
     })
     const [loading, setLoading] = useState(false)
 
@@ -81,6 +81,16 @@ function ProductModal({ product, onClose, onSave }) {
                             <input name="dimensions" value={form.dimensions} onChange={handleChange} className="form-input" placeholder="Ø65mm x H205mm" />
                         </div>
                     </div>
+                    <div className="grid-2">
+                        <div className="form-group">
+                            <label className="form-label">Stock Count *</label>
+                            <input type="number" name="countInStock" value={form.countInStock} onChange={handleChange} className="form-input" required min="0" />
+                        </div>
+                        <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 28 }}>
+                            <input type="checkbox" name="inStock" id="inStock" checked={form.inStock} onChange={handleChange} />
+                            <label htmlFor="inStock" className="form-label" style={{ margin: 0 }}>Manual In Stock Force</label>
+                        </div>
+                    </div>
                     <div className="form-group">
                         <label className="form-label">Description *</label>
                         <textarea name="description" value={form.description} onChange={handleChange} className="form-input" required rows={3} placeholder="Describe the product..." />
@@ -114,10 +124,6 @@ function ProductModal({ product, onClose, onSave }) {
                                 <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Image preview — if blank, image URL may be invalid.</span>
                             </div>
                         )}
-                    </div>
-                    <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <input type="checkbox" name="inStock" id="inStock" checked={form.inStock} onChange={handleChange} />
-                        <label htmlFor="inStock" className="form-label" style={{ margin: 0 }}>In Stock</label>
                     </div>
                     <button type="submit" className="btn btn-primary btn-full" disabled={loading} style={{ marginTop: 8 }}>
                         {loading ? 'Saving...' : isEdit ? 'Update Product' : 'Create Product'}
@@ -352,7 +358,7 @@ function Dashboard() {
                                 <table>
                                     <thead>
                                         <tr>
-                                            <th>Product</th><th>Category</th><th>Capacity</th><th>Status</th>
+                                            <th>Product</th><th>Category</th><th>Capacity</th><th>Stock</th><th>Status</th>
                                             {user?.role === 'admin' && <th>Actions</th>}
                                         </tr>
                                     </thead>
@@ -365,6 +371,7 @@ function Dashboard() {
                                                 </td>
                                                 <td><span className="badge badge-blue" style={{ textTransform: 'capitalize' }}>{p.category}</span></td>
                                                 <td style={{ color: 'var(--secondary-light)' }}>{p.capacity}</td>
+                                                <td style={{ fontWeight: 700 }}>{p.countInStock}</td>
                                                 <td><span className={`badge ${p.inStock ? 'badge-green' : 'badge-gray'}`}>{p.inStock ? 'In Stock' : 'Out of Stock'}</span></td>
                                                 {user?.role === 'admin' && (
                                                     <td>
